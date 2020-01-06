@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Quick intro to ASDF</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="styles/styles.css">
+    <style>
+        .shower {
+            --slide-ratio: calc(16 / 9);
+            --color-key: #666;
+            font: 16px/2 'Roboto', sans-serif;
+        }
+    </style>
+</head>
+<body class="shower list">
+
+<header class="caption">
+    <h1>asdf intro</h1>
+</header>
+
+<section class="slide">
+    <h2>Why we need tool version management</h2>
+    <ul>
+        <li>we often rely on specific tool versions (<code>terraform</code>)</li>
+        <li class="next">we currently have no way of documenting tools and versions for projects</li>
+        <li class="next">we end up duplicating code for downloading required tools (<code>kustomize</code>)</li>
+        <li class="next">when upgrading tools, we currently have no process to ensure that everybody gets the new
+            version
+        </li>
+    </ul>
+</section>
+
+<section class="slide">
+    <h2>Why use <code>asdf</code>?</h2>
+    <h3>(what they say)</h3>
+    <ul>
+        <li>single CLI for multiple languages</li>
+        <li class="next">consistent commands to manage all your languages</li>
+        <li class="next">single global config keeping defaults in one place</li>
+        <li class="next" title="as opposed to having multiple .*-version files">single <code>.tool-versions</code>
+            config file per project/directory
+        </li>
+        <li class="next">automatically switches runtime versions as you traverse your directories</li>
+        <li class="next">simple plugin system to add support for your language of choice</li>
+        <li class="next">completion scripts managed by the plugin, not you!</li>
+    </ul>
+</section>
+
+<section class="slide">
+    <h2>Example: Cawemo</h2>
+    <p>Cawemo depends on <code>terraform</code> version 0.11.14.
+        <br/>How do I know?</br>
+    <pre class="next">
+        <code>&gt; aws s3 cp --profile cawemo \
+    s3://cawemo-terraform-states/prod/terraform.tfstate - \
+    | jq -r .terraform_version</code>
+        <div class="next">0.11.14</div>
+    </pre>
+</section>
+
+<section class="slide">
+    <a class="shout" href="https://imgflip.com/i/3lbsi0"><img src="https://i.imgflip.com/3lbsi0.jpg"
+                                                              title="made at imgflip.com"/></a>
+    <h2 class="cover shout next" style="color: white; z-index: 1; background-color: var(--color-grey)">But...</h2>
+</section>
+
+<section class="slide">
+    <h2>Example: Cawemo</h2>
+    <h3>It's kind of unpractical to find that out for every project you're working on!</h3>
+    <h1 class="next shout"><code>asdf</code> to the rescue!</h1>
+</section>
+
+<section class="slide">
+    <h2>Example: Cawemo</h2>
+    <p>With <code>asdf</code>, we only need to include <code>.tool-versions</code> in our repo:</p>
+    <pre>
+        <code class="mark next">cd ~/src/cawemo/infrastructure/terraform; cat .tool-versions</code>
+terraform 0.11.14<br/>
+kops 1.13.2
+        <code class="mark next">asdf install</code>
+        <code class="mark next">asdf current terraform</code>
+0.11.14  (set by /var/home/lwille/src/cawemo/infrastructure/terraform/.tool-versions)</code>
+        <code class="mark next">terraform version</code>
+<code class="next">Terraform v0.11.14
+
+Your version of Terraform is out of date! The latest version
+is 0.12.18. You can update by downloading from www.terraform.io/downloads.html</code>
+    </pre>
+
+</section>
+
+<section class="slide">
+    <h2>Example: k8s-infrastructure</h2>
+    <pre>
+        <code>cd ~/src/k8s-infrastructure; asdf current</code>
+        <div class="next">1password      0.8.0    (set by /var/home/lwille/.tool-versions)</div>
+        <div class="next">groovy         apache-groovy-binary-2.4.9 (set by /var/home/lwille/.tool-versions)</div>
+        <div class="next">java           adopt-openjdk-8u232-b09_openj9-0.17.0 (set by /var/home/lwille/.tool-versions)</div>
+        <div class="next">kops           No version set for kops; please run `asdf &lt;global | local&gt; kops &lt;version&gt;`</div>
+        <div class="next">kubectl        1.16.3   <mark class="next">(set by /var/home/lwille/.tool-versions)</mark></div>
+        <div class="next">kustomize      3.2.3    <mark class="next">(set by /var/home/lwille/.tool-versions)</mark></div>
+        <div class="next">maven          3.6.3    (set by /var/home/lwille/.tool-versions)</div>
+        <div class="next">nodejs         12.14.0  (set by /var/home/lwille/.tool-versions)</div>
+        <div class="next">python         3.8.0 2.7.17 (set by /var/home/lwille/.tool-versions)</div>
+        <div class="next">shellcheck     0.4.6    (set by /var/home/lwille/.tool-versions)</div>
+        <div class="next">terraform      0.11.14  (set by /var/home/lwille/.tool-versions)</div>
+    </pre>
+</section>
+
+<section class="slide">
+    <a class="shout" href="https://imgflip.com/i/3lc6sc"><img src="https://i.imgflip.com/3lc6sc.jpg" title="made at imgflip.com"/></a>
+</section>
+
+<section class="slide">
+    <h2>Example: k8s-infrastructure</h2>
+    <p>Ok so we want to set a <code>kustomize</code> and <code>kubectl</code> version for this repo, and also use the latest version of <code>kubectl</code>:</p>
+    <pre>
+        <code class="next">cd ~/src/k8s-infrastructure</code>
+        <code class="next">asdf local kustomize 3.2.3</code>
+        <code class="next">asdf install kubectl latest</code>
+        <code class="next">asdf local kubectl 1.17.0</code>
+        <code class="next">kubectl version</code>
+        <div class="next">Client Version: version.Info{Major:"1", Minor:"17", GitVersion:"<mark class="important">v1.17.0</mark>", GitCommit:"70132b0f130acc0bed193d9ba59dd186f0e634cf", GitTreeState:"clean", BuildDate:"2019-12-07T21:20:10Z", GoVersion:"go1.13.4", Compiler:"gc", Platform:"linux/amd64"}
+Server Version: version.Info{Major:"1", Minor:"14+", GitVersion:"v1.14.7-gke.23", GitCommit:"81c87c699557fed991e292cd328b2129c2f242a2", GitTreeState:"clean", BuildDate:"2019-11-07T19:23:23Z", GoVersion:"go1.12.11b4", Compiler:"gc", Platform:"linux/amd64"}</div>
+    </pre>
+</section>
+
+<section class="slide">
+    <h2>Example: k8s-infrastructure</h2>
+    <p>(continued)</p>
+    <pre>
+        <code>cd $HOME;kubectl version</code>
+        <div class="next">Client Version: version.Info{Major:"1", Minor:"16", GitVersion:"<mark class="important">v1.16.3</mark>", GitCommit:"b3cbbae08ec52a7fc73d334838e18d17e8512749", GitTreeState:"clean", BuildDate:"2019-11-13T11:23:11Z", GoVersion:"go1.12.12", Compiler:"gc", Platform:"linux/amd64"}
+Server Version: version.Info{Major:"1", Minor:"14+", GitVersion:"v1.14.7-gke.23", GitCommit:"81c87c699557fed991e292cd328b2129c2f242a2", GitTreeState:"clean", BuildDate:"2019-11-07T19:23:23Z", GoVersion:"go1.12.11b4", Compiler:"gc", Platform:"linux/amd64"}</div>
+    </pre>
+</section>
+<section class="slide" data-timing="00:05">
+    <h2 class="shout">Questions?</h2>
+</section>
+
+<section class="slide">
+   <a class="shout" href="https://asdf-vm.com">asdf-vm.com</a>
+
+</section>
+
+<div class="progress"></div>
+
+<footer class="badge">
+    <a href="https://github.com/shower/shower">
+        <svg width="81" height="79" viewBox="0 0 81 79" aria-hidden="true">
+            <path d="M40.5 0a40.5 40.5 0 0 0-12.8 78.93c2 .37 2.76-.88 2.76-2s0-3.51-.05-6.89c-11.27 2.45-13.64-5.43-13.64-5.43-1.84-4.68-4.5-5.92-4.5-5.92-3.68-2.51.28-2.46.28-2.46 4.06.29 6.2 4.17 6.2 4.17 3.61 6.19 9.48 4.4 11.79 3.37a8.65 8.65 0 0 1 2.57-5.41c-9-1-18.45-4.5-18.45-20a15.65 15.65 0 0 1 4.17-10.87 14.57 14.57 0 0 1 .4-10.72s3.4-1.09 11.14 4.15a38.39 38.39 0 0 1 20.28 0c7.73-5.24 11.13-4.15 11.13-4.15a14.55 14.55 0 0 1 .4 10.72 15.63 15.63 0 0 1 4.16 10.87c0 15.56-9.47 19-18.49 20 1.45 1.25 2.75 3.72 2.75 7.5v11.11c0 1.08.73 2.34 2.78 1.95A40.51 40.51 0 0 0 40.5 0z"/>
+        </svg>
+        Fork me<br>on GitHub
+    </a>
+</footer>
+
+<script src="shower.min.js"></script>
+
+<!-- Copyright © 3000 Yours Truly, Famous Inc. -->
+</body>
+</html>
