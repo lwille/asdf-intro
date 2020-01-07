@@ -140,8 +140,22 @@ Server Version: version.Info{Major:"1", Minor:"14+", GitVersion:"v1.14.7-gke.23"
 </section>
 
 <section class="slide">
-   <a class="shout" href="https://asdf-vm.com">asdf-vm.com</a>
+    <h2>Answers</h2>
+    <dl>
+        <dt>Can I simply override a tool version for a specific directory?</dt>
+        <dd>Sure!<pre>
+            <code>export ASDF_PYTHON_VERSION=3.8.0</code>
+            <code>asdf current python</code>
+            <div>3.8.0    (set by ASDF_PYTHON_VERSION environment variable)</div>
+            <code>unset ASDF_PYTHON_VERSION</code>
+            <code>asdf current python</code>
+            <div>3.8.0 2.7.17 (set by /var/home/user/.tool-versions)</div>
+        </pre></dd>
+    </dl>
+</section>
 
+<section class="slide">
+   <a class="shout" href="https://asdf-vm.com">asdf-vm.com</a>
 </section>
 
 <div class="progress"></div>
